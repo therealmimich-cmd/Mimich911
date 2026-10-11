@@ -17,7 +17,8 @@ const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
 const express = require('express');
-const Database = require('better-sqlite3');
+// Встроенная в Node.js база данных SQLite. Ничего отдельно ставить не нужно!
+const { Database } = require('node:sqlite');
 const bcrypt = require('bcryptjs');
 
 // --- Настройки ---------------------------------------------------------------
@@ -29,7 +30,8 @@ const MAX_MESSAGE_LENGTH = 2000;
 // --- База данных -------------------------------------------------------------
 fs.mkdirSync(DATA_DIR, { recursive: true });
 const db = new Database(path.join(DATA_DIR, 'messenger.db'));
-db.pragma('journal_mode = WAL'); // надёжный режим записи
+// Надёжный режим записи (чтобы данные не терялись при внезапном выключении).
+db.exec('PRAGMA journal_mode = WAL;');
 
 // Создаём таблицы, если их ещё нет.
 // Таблица — это как лист в Excel: свои столбцы и строки.
@@ -84,13 +86,13 @@ const q = {
   listConversations: db.prepare(`
     SELECT
       c.id,
-      CASE WHEN c.user_a = @me THEN c.user_b ELSE c.user_a END AS other_id,
+      CASE WHEN c.user_a = ? THEN c.user_b ELSE c.user_a END AS other_id,
       u.username AS other_name,
       (SELECT body       FROM messages m WHERE m.conversation_id = c.id ORDER BY m.id DESC LIMIT 1) AS last_body,
       (SELECT created_at FROM messages m WHERE m.conversation_id = c.id ORDER BY m.id DESC LIMIT 1) AS last_at
     FROM conversations c
-    JOIN users u ON u.id = CASE WHEN c.user_a = @me THEN c.user_b ELSE c.user_a END
-    WHERE c.user_a = @me OR c.user_b = @me
+    JOIN users u ON u.id = CASE WHEN c.user_a = ? THEN c.user_b ELSE c.user_a END
+    WHERE c.user_a = ? OR c.user_b = ?
     ORDER BY c.id DESC
   `),
 
@@ -200,7 +202,8 @@ app.get('/api/users', requireAuth, (req, res) => {
 });
 
 app.get('/api/conversations', requireAuth, (req, res) => {
-  res.json({ conversations: q.listConversations.all({ me: req.user.id }) });
+  const id = req.user.id;
+  res.json({ conversations: q.listConversations.all(id, id, id, id) });
 });
 
 // Открыть (или создать) чат с выбранным человеком.
