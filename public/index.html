@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Простой мессенджер</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ЭКРАН 1: представиться (регистрация / вход) -->
+  <div id="auth-screen" class="screen">
+    <div class="auth-card">
+      <h1>Простой мессенджер</h1>
+      <p class="subtitle">Представься, чтобы тебя могли найти друзья.</p>
+
+      <div class="tabs">
+        <button id="tab-register" class="tab active" type="button">Новый я</button>
+        <button id="tab-login" class="tab" type="button">Уже есть</button>
+      </div>
+
+      <form id="auth-form" autocomplete="on">
+        <label>
+          Имя
+          <input id="username" type="text" name="username" placeholder="например, Anya" maxlength="20" required>
+        </label>
+        <label>
+          Пароль
+          <input id="password" type="password" name="password" placeholder="секретное слово" required>
+        </label>
+        <button id="auth-submit" class="primary" type="submit">Создать меня</button>
+        <p id="auth-error" class="error" hidden></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- ЭКРАН 2: сам чат -->
+  <div id="chat-screen" class="screen" hidden>
+    <aside class="sidebar">
+      <header class="me">
+        <span>Ты: <b id="me-name">…</b></span>
+        <button id="logout" class="link" type="button">Выйти</button>
+      </header>
+
+      <section class="people">
+        <h2>Все люди</h2>
+        <ul id="people-list" class="list"></ul>
+        <p class="empty" id="people-empty">Пока больше никого нет. Позови друзей!</p>
+      </section>
+
+      <section class="chats">
+        <h2>Мои чаты</h2>
+        <ul id="chat-list" class="list"></ul>
+        <p class="empty" id="chats-empty">Ты ещё ни с кем не общаешься.</p>
+      </section>
+    </aside>
+
+    <main class="conversation">
+      <div id="no-chat" class="placeholder">
+        <p>Выбери человека слева — и начинайте общаться.</p>
+      </div>
+
+      <template id="conversation-template">
+        <header class="conv-head">
+          <h2 id="conv-title"></h2>
+        </header>
+        <div id="messages" class="messages"></div>
+        <form id="send-form" class="send">
+          <input id="message-input" type="text" placeholder="Напиши сообщение…" autocomplete="off">
+          <button class="primary" type="submit">Отправить</button>
+        </form>
+      </template>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
