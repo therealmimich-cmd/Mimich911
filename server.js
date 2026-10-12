@@ -268,6 +268,16 @@ app.get('*', (_req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.listen(PORT, () => {
-  console.log(`Мессенджер запущен на порту ${PORT}. База: ${path.join(DATA_DIR, 'messenger.db')}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log('============================================================');
+  console.log('Мессенджер запущен.');
+  console.log(`  Порт (дверь): ${PORT}`);
+  console.log(`  База данных:  ${path.join(DATA_DIR, 'messenger.db')}`);
+  console.log('============================================================');
+}).on('error', (err) => {
+  console.error('НЕ УДАЛОСЬ ЗАПУСТИТЬ СЕРВЕР:', err.message);
 });
+
+// Если что-то сломается в работе — покажем это в логах, а не упадём молча.
+process.on('uncaughtException', (err) => console.error('Неожиданная ошибка:', err));
+process.on('unhandledRejection', (err) => console.error('Неожиданная ошибка (promise):', err));
