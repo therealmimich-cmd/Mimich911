@@ -18,7 +18,10 @@ const fs = require('fs');
 const crypto = require('crypto');
 const express = require('express');
 // Встроенная в Node.js база данных SQLite. Ничего отдельно ставить не нужно!
-const { Database } = require('node:sqlite');
+// В разных версиях Node.js класс называется по-разному (Database или DatabaseSync),
+// поэтому берём тот, который есть в наличии.
+const sqlite = require('node:sqlite');
+const Database = sqlite.Database || sqlite.DatabaseSync;
 const bcrypt = require('bcryptjs');
 
 // --- Настройки ---------------------------------------------------------------
