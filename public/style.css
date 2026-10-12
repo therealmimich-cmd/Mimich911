@@ -15,6 +15,11 @@
 
 * { box-sizing: border-box; }
 
+/* ВАЖНО: атрибут hidden должен прятать элемент ВСЕГДА.
+   Без этого правила оформление экранов (display: flex/grid) «перебивает» hidden,
+   и переключение между экраном входа и чатом становится незаметным. */
+[hidden] { display: none !important; }
+
 body {
   margin: 0;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
